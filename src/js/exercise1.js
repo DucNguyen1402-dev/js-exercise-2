@@ -231,7 +231,7 @@ function checkAdmission() {
 DOM.checkBtn.addEventListener("click", checkAdmission);
 
 function resetCheckArea() {
-  DOM.checkArea.classList.remove("bg-green-500", "bg-yellow-500");
+  DOM.checkArea.classList.remove("bg-green-500", "bg-yellow-500", "bg-rose-500");
   DOM.happyIcon.classList.add("hidden");
   DOM.sadIcon.classList.add("hidden");
   DOM.checkAreaText.textContent = "";
