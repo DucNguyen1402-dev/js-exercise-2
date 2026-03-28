@@ -46,7 +46,7 @@ window.addEventListener("load", () => {
   }, 2000);
 
   setTimeout(() => {
-    DOM.roundShape.classList.add("lg:-translate-x-250", "2xl:-translate-x-300");
+    DOM.roundShape.classList.add("-translate-x-[150vw]");
   }, 2100);
 
   setTimeout(() => {
@@ -98,6 +98,7 @@ function closeCard() {
   if (!activeCard) return;
 
   activeCard.classList.add("closed-card");
+  activeCard.querySelector(".reset__btn").click();
   activeCard.querySelector(".backdrop").classList.remove("-translate-y-full");
   setTimeout(() => {
     activeCard.classList.remove("active-card");

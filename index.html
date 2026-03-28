@@ -15,16 +15,21 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
+    <script
+      src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.3/dist/dotlottie-wc.js"
+      type="module"
+    ></script>
 
     <script type="module" src="./src/js/main.js"></script>
     <script type="module" src="./src/js/exercise1.js"></script>
-    <!-- <script type="module" src="./src/js/exercise2.js"></script>
-    <script type="module" src="./src/js/exercise3.js"></script>
+    <script type="module" src="./src/js/exercise2.js"></script>
+
+    <!--<script type="module" src="./src/js/exercise3.js"></script>
     <script type="module" src="./src/js/exercise4.js"></script> -->
   </head>
 
   <body
-    class="relative min-h-screen overflow-hidden bg-linear-to-br from-slate-900 via-slate-800 to-slate-700 py-10"
+    class="relative min-h-screen overflow-hidden bg-linear-to-br from-slate-900 via-slate-800 to-slate-600 py-10"
   >
     <div class="flex justify-center gap-2">
       <div class="w-10 overflow-hidden">
@@ -39,14 +44,18 @@
       class="card-container mx-auto grid max-w-4xl grid-cols-2 place-items-center gap-x-10 gap-y-16"
     >
       <article
-        class="card admission__management group relative h-140 max-w-md cursor-pointer overflow-hidden rounded-lg border border-slate-100 bg-gray-100 p-4 pb-6 transition duration-500 hover:-translate-y-4 closed-card "
+        class="card admission__management group closed-card relative max-w-md cursor-pointer overflow-hidden rounded-lg border border-slate-100 bg-gray-100 p-4 pb-16 transition duration-500 hover:-translate-y-4"
       >
-        <p class=" text-slate-500">
+        <p class="text-slate-500">
           Enter the benchmark, scores for three subjects, priority area (A, B,
           C, X), and priority category (1, 2, 3, 0).
         </p>
         <div class="mt-6">
-          <label class="text-sm font-medium text-gray-400">Benchmark</label>
+          <label
+            class="cursor-pointer text-sm font-medium text-gray-400"
+            for="benchmark"
+            >Benchmark</label
+          >
           <input
             type="number"
             resetCheckArea();
@@ -55,56 +64,84 @@
             min="0"
             max="30"
             step="0.1"
+            id="benchmark"
           />
         </div>
         <div class="mt-4 grid grid-cols-3 gap-6">
           <div>
-            <label class="text-sm font-medium text-gray-400">Math</label>
+            <label
+              class="cursor-pointer text-sm font-medium text-gray-400"
+              for="math"
+              >Math</label
+            >
             <input
               type="number"
               class="subject__input mt-2 w-full rounded-sm border border-gray-300 bg-white px-2 py-1 focus:ring-1 focus:ring-blue-500/60 focus:outline-none"
               min="0"
               max="10"
               step="0.1"
+              id="math"
             />
           </div>
           <div>
-            <label class="text-sm font-medium text-gray-400">Physics</label>
+            <label
+              class="cursor-pointer text-sm font-medium text-gray-400"
+              for="physics"
+              >Physics</label
+            >
             <input
               type="number"
               class="subject__input mt-2 w-full rounded-sm border border-gray-300 bg-white px-2 py-1 focus:ring-1 focus:ring-blue-500/60 focus:outline-none"
               min="0"
               max="10"
               step="0.1"
+              id="physics"
             />
           </div>
           <div>
-            <label class="text-sm font-medium text-gray-400">Chemistry</label>
+            <label
+              class="cursor-pointer text-sm font-medium text-gray-400"
+              for="chemistry"
+              >Chemistry</label
+            >
             <input
               type="number"
               class="subject__input mt-2 w-full rounded-sm border border-gray-300 bg-white px-2 py-1 focus:ring-1 focus:ring-blue-500/60 focus:outline-none"
               min="0"
               max="10"
               step="0.1"
+              id="chemistry"
             />
           </div>
         </div>
         <div class="mt-4 grid grid-cols-2 gap-4">
           <div class="flex flex-col gap-2">
-            <label class="text-sm font-medium text-gray-400">Area</label>
+            <label
+              class="cursor-pointer text-sm font-medium text-gray-400"
+              for="area"
+              >Area</label
+            >
             <select
               class="select__area cursor-pointer rounded-sm border border-gray-300 bg-white px-2 py-1.5 text-sm text-gray-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+              id="area"
+              data-default="X"
             >
-              <option value="A">None (X)</option>
-              <option value="B">Area A</option>
-              <option value="C">Area B</option>
-              <option class="D">Area C</option>
+              <option value="X">None (X)</option>
+              <option value="A">Area A</option>
+              <option value="B">Area B</option>
+              <option class="C">Area C</option>
             </select>
           </div>
           <div class="flex flex-col gap-2">
-            <label class="text-sm font-medium text-gray-400">Caterogy</label>
+            <label
+              class="cursor-pointer text-sm font-medium text-gray-400"
+              for="caterory"
+              >Caterogy</label
+            >
             <select
               class="select__caterory cursor-pointer rounded-sm border border-gray-300 bg-white px-2 py-1.5 text-sm text-gray-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+              id="caterory"
+              data-default="0"
             >
               <option value="0">None (0)</option>
               <option value="1">Caterogy 1</option>
@@ -113,9 +150,9 @@
             </select>
           </div>
         </div>
-        <div class="mt-30 text-sm text-white">
-          <div class="benchmark__warning__area hidden rounded-sm p-2"></div>
-          <div class="subject__warning__area hidden rounded-sm p-2"></div>
+        <div class="mt-30 flex flex-col gap-2 text-sm text-white">
+          <p class="benchmark__warning__area hidden rounded-sm p-2"></p>
+          <p class="subject__warning__area hidden rounded-sm p-2"></p>
           <div
             class="check__area flex items-center gap-2 rounded-sm p-2 text-white"
           >
@@ -132,11 +169,17 @@
 
         <button
           type="button"
-          class="check__btn absolute bottom-2 left-2 cursor-pointer rounded-md border-none bg-blue-500 px-4 py-2 text-sm text-white transition-colors duration-300 hover:bg-blue-600"
+          class="check__btn absolute right-2 bottom-2 cursor-pointer rounded-md border-none bg-blue-500 px-4 py-2 text-sm text-white transition-colors duration-300 hover:bg-blue-600"
         >
           Check result
         </button>
 
+        <button
+          type="button"
+          class="reset__btn hidden absolute bottom-2 left-2 cursor-pointer rounded-md bg-red-500 px-2 py-1 text-sm text-white transition-colors duration-300 hover:bg-red-600"
+        >
+          reset
+        </button>
 
         <div
           class="backdrop absolute inset-0 z-10 flex items-center justify-center bg-linear-to-br from-indigo-600 to-purple-600 text-slate-200 transition duration-1000 group-hover:from-indigo-700 group-hover:to-purple-700 group-hover:text-slate-100"
@@ -147,27 +190,110 @@
         </div>
       </article>
 
+      <article
+        class="card electricity__calculator group closed-card relative h-120 max-w-md cursor-pointer overflow-hidden rounded-lg border border-slate-100 bg-gray-100 p-4 pb-6 transition duration-500 hover:-translate-y-4"
+      >
+        <p class="text-slate-500">
+          Enter the customer name and total kWh consumed to calculate the tiered
+          electricity bill.
+        </p>
+        <div class="mt-6">
+          <div class="flex flex-col gap-2">
+            <label
+              for="name"
+              class="cursor-pointer text-sm font-medium text-gray-400"
+              >Customer name</label
+            >
+            <input
+              type="text"
+              id="name"
+              name="name"
+              class="customer__name__input w-full rounded-sm border border-gray-300 bg-white px-2 py-1.5 placeholder:text-sm placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500/60 focus:outline-none"
+              placeholder="e.g. Nguyen Van A"
+            />
+          </div>
+          <div class="mt-4 flex flex-col gap-2">
+            <label
+              for="number"
+              class="cursor-pointer text-sm font-medium text-gray-400"
+              >Electricity usage (kWh)</label
+            >
+            <input
+              type="number"
+              id="number"
+              name="number"
+              class="kwh__input w-full rounded-sm border border-gray-300 bg-white px-2 py-1.5 placeholder:text-sm placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500/60 focus:outline-none"
+              placeholder="e.g. 350"
+            />
+          </div>
+        </div>
+        <div class="result__area mt-8">
+          <div
+            class="bill__message hidden rounded-sm bg-green-500 px-2 py-1.5 text-slate-100"
+          >
+            <span>
+              😊 Hello
+              <span class="customer__name__display font-medium underline"></span
+              >,
+            </span>
+            <div>
+              <span>your total electricity bill is</span>
+              <span class="bill__value font-bold"></span>
+            </div>
+          </div>
 
+          <p
+            class="warning__area hidden rounded-sm bg-yellow-500 px-2 py-1 text-white"
+          ></p>
+        </div>
 
+        <button
+          type="button"
+          class="check__btn absolute bottom-2 left-2 cursor-pointer rounded-md border-none bg-blue-500 px-4 py-2 text-sm text-white transition-colors duration-300 hover:bg-blue-600"
+        >
+          Check result
+        </button>
+        <button
+          type="button"
+          class="reset__btn absolute right-2 bottom-2 cursor-pointer rounded-md bg-red-500 px-2 py-1 text-sm text-white transition-colors duration-300 hover:bg-red-600"
+        >
+          reset
+        </button>
 
-
+        <div
+          class="backdrop absolute inset-0 z-10 flex items-center justify-center bg-linear-to-br from-indigo-600 to-purple-600 text-slate-200 transition duration-1000 group-hover:from-indigo-700 group-hover:to-purple-700 group-hover:text-slate-100"
+        >
+          <h2 class="text-xl font-bold tracking-wider">
+            02. ELECTRICITY BILL CALCULATOR
+          </h2>
+        </div>
+      </article>
     </main>
-    <div id="backdrop" class="fixed inset-0 bg-slate-900/90 hidden z-40"></div>
+
+    <div id="backdrop" class="fixed inset-0 z-40 hidden bg-slate-900/90"></div>
     <div
-      class="round-shape fixed w-12 top-5 right-3 animate-bounce transition duration-2000 ease-out"
+      class="round-shape fixed top-5 right-3 w-12 animate-bounce transition duration-2000 ease-out"
     >
       <img src="./src/img/round-shape.png" alt="round shape icon" />
     </div>
 
-    <div class="flex flex-col gap-2 absolute top-2 right-2">
+    <div class="absolute top-2 right-2 flex flex-col gap-2">
       <span
-        class="card-guide is-open text-sm bg-blue-600 pl-6 pr-4 py-3 rounded-l-full text-white translate-x-[110%] transition-transform duration-1000 ease-out cursor-pointer"
+        class="card-guide is-open translate-x-[110%] cursor-pointer rounded-l-full bg-blue-600 py-3 pr-4 pl-6 text-sm text-white transition-transform duration-1000 ease-out"
         >Click a card to open it</span
       >
       <span
-        class="card-guide is-collapsed text-sm bg-rose-600 pl-6 py-3 rounded-l-full text-white translate-x-[110%] transition-transform duration-1000 ease-out cursor-pointer "
+        class="card-guide is-collapsed translate-x-[110%] cursor-pointer rounded-l-full bg-rose-600 py-3 pl-6 text-sm text-white transition-transform duration-1000 ease-out"
         >Press ESC to close it</span
       >
-    </div> 
+    </div>
+    <div class="absolute -right-10 -bottom-10">
+      <dotlottie-wc
+        src="https://lottie.host/6a9f714d-6148-40c7-b00d-89489034a042/AqrOfezs0D.lottie"
+        class="size-50"
+        autoplay
+        loop
+      ></dotlottie-wc>
+    </div>
   </body>
 </html>
