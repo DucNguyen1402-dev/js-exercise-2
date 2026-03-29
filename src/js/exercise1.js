@@ -41,35 +41,40 @@ const PRIORITY_POINTS = {
  * ==========================================
  */
 
+
 function validateBenmarkInput() {
-  const value = DOM.benchmarkInput.value;
+  const value = DOM.benchmarkInput.value.trim();
+
+  const context = { currentError: null };
 
   if (value === "") {
-    resetCheckArea();
-    DOM.benchmarkWarningArea.classList.remove("hidden");
-    DOM.benchmarkWarningArea.classList.add("bg-yellow-500");
-    DOM.benchmarkWarningArea.textContent =
-      "Your benchmark input is empty! Please enter a number";
-    DOM.benchmarkInput.classList.add("ring-1", "ring-yellow-500");
+    context.currentError = "empty";
+  }
+
+  const num = Number(value);
+
+  if (Number.isNaN(num) || num < 0 || num > 30) {
+    context.currentError = "invalid";
+  }
+
+  if (context.currentError) {
+    handleBenmarkErrorUI(context);
     return {
       isValid: false,
     };
   }
 
-  const benchmarkValue = DOM.benchmarkInput.valueAsNumber;
+  resetBenchmarkWarningArea();
+  return {
+    isValid: true,
+  };
+}
 
-  if (isNaN(benchmarkValue) || benchmarkValue < 0 || benchmarkValue > 30) {
-    resetCheckArea();
-    invalidBenchmark();
-    return {
-      isValid: false,
-    };
-  } else {
-    resetBenchmarkWarningArea();
-    return {
-      isValid: true,
-    };
-  }
+
+
+function handleBenmarkErrorUI(context) {
+  resetCheckArea();
+  showBenchmarkError(context);
 }
 
 function validateSubjectInput() {
@@ -138,6 +143,35 @@ function validateSubjectInput() {
  * ==========================================
  */
 
+const BENCHMARK_INVALID = {
+  empty: {
+    bg: "bg-yellow-500",
+    text: "Your benchmark input is empty! Please enter a number",
+    ring: "ring-yellow-500",
+  },
+  invalid: {
+    bg: "bg-rose-500",
+    text: "Benchmark must be a number between 0 and 30.",
+    ring: "ring-rose-500",
+  },
+};
+
+const errorUIContext = {
+  currentErrorBg: null,
+};
+
+function showBenchmarkError(context) {
+  const config = BENCHMARK_INVALID[context.currentError];
+
+  resetBenchmarkWarningArea(errorUIContext.currentErrorBg);
+
+  DOM.benchmarkWarningArea.classList.remove("hidden");
+  DOM.benchmarkWarningArea.classList.add(config.bg);
+  DOM.benchmarkWarningArea.textContent = config.text;
+  DOM.benchmarkInput.classList.add("ring-1", config.ring);
+  errorUIContext.currentErrorBg = config.bg;
+}
+
 function invalidSubjectInput() {
   DOM.subjectErrorInvalid.classList.remove("hidden");
   DOM.subjectErrorInvalid.classList.add("bg-rose-500");
@@ -160,10 +194,14 @@ function resetBenchmark() {
   resetBenchmarkInput();
 }
 
-function resetBenchmarkWarningArea() {
+function resetBenchmarkWarningArea(
+  currentErrorBg = errorUIContext.currentErrorBg,
+) {
+  if (!currentErrorBg) return;
+
   DOM.benchmarkWarningArea.classList.add("hidden");
-  DOM.benchmarkWarningArea.classList.remove("bg-rose-500", "bg-yellow-500");
   DOM.benchmarkWarningArea.textContent = "";
+  DOM.benchmarkWarningArea.classList.remove(currentErrorBg);
 }
 
 function resetBenchmarkInput() {
@@ -175,14 +213,6 @@ function resetBenchmarkInput() {
   DOM.benchmarkInput.classList.remove("focus:ring-1", "focus:ring-rose-500");
   DOM.benchmarkInput.classList.add("focus:ring-2", "focus:ring-blue-500/60");
   DOM.benchmarkInput.classList.replace("border-rose-500", "border-gray-300");
-}
-
-function invalidBenchmark() {
-  DOM.benchmarkWarningArea.classList.remove("hidden");
-  DOM.benchmarkWarningArea.classList.add("bg-rose-500");
-  DOM.benchmarkWarningArea.textContent =
-    "Benchmark must be a number between 0 and 30.";
-  DOM.benchmarkInput.classList.add("ring-1", "ring-rose-500");
 }
 
 function resetSubject() {
