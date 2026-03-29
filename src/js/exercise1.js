@@ -41,7 +41,7 @@ const PRIORITY_POINTS = {
  * ==========================================
  */
 
-
+/* --  Benchmark Input -- */
 function validateBenmarkInput() {
   const value = DOM.benchmarkInput.value.trim();
 
@@ -70,13 +70,7 @@ function validateBenmarkInput() {
   };
 }
 
-
-
-function handleBenmarkErrorUI(context) {
-  resetCheckArea();
-  showBenchmarkError(context);
-}
-
+/* --  Subject Input -- */
 function validateSubjectInput() {
   let isEmpty = false;
   const emptyIndex = [];
@@ -137,12 +131,16 @@ function validateSubjectInput() {
     isValid: true,
   };
 }
+
 /**
  * ==========================================
  *     3. UI & DOM MANIPULATION (Helpers)
  * ==========================================
  */
 
+/* =============BENCHMARK INPUT============= */
+
+/* -- benchmark state -- */
 const BENCHMARK_INVALID = {
   empty: {
     bg: "bg-yellow-500",
@@ -156,46 +154,84 @@ const BENCHMARK_INVALID = {
   },
 };
 
-const errorUIContext = {
+const benchmarkContext = {
   currentErrorBg: null,
 };
 
-function showBenchmarkError(context) {
-  const config = BENCHMARK_INVALID[context.currentError];
+/* ---- benchmark UI logic ---- */
 
-  resetBenchmarkWarningArea(errorUIContext.currentErrorBg);
-
-  DOM.benchmarkWarningArea.classList.remove("hidden");
-  DOM.benchmarkWarningArea.classList.add(config.bg);
-  DOM.benchmarkWarningArea.textContent = config.text;
-  DOM.benchmarkInput.classList.add("ring-1", config.ring);
-  errorUIContext.currentErrorBg = config.bg;
-}
-
-function invalidSubjectInput() {
-  DOM.subjectErrorInvalid.classList.remove("hidden");
-  DOM.subjectErrorInvalid.classList.add("bg-rose-500");
-  DOM.subjectErrorInvalid.textContent = `Subject input must be a number between 0 and 10.`;
-}
-
-function resetCheckArea() {
-  DOM.checkArea.classList.remove(
-    "bg-green-500",
-    "bg-yellow-500",
-    "bg-rose-500",
-  );
-  DOM.happyIcon.classList.add("hidden");
-  DOM.sadIcon.classList.add("hidden");
-  DOM.checkAreaText.textContent = "";
-}
+// PUBLIC API
 
 function resetBenchmark() {
   resetBenchmarkWarningArea();
-  resetBenchmarkInput();
+  resetBenchmarkInputHighlight();
 }
 
+
+// INTERNAL
+
+/* handle context */
+function getBenchmarkState(value) {
+  if (value === "") return "empty";
+
+  const number = Number(value);
+  if (Number.isNaN(number) || number < 0 || number > 30) {
+    return "invalid";
+  }
+  return "valid";
+}
+function setDefaultState() {
+  DOM.benchmarkInput.classList.add("focus:ring-blue-500/60");
+}
+
+
+function handleBenmarkErrorUI(context) {
+  resetCheckArea();
+  showBenchmarkError(context);
+}
+
+/* reset state */
+function clearAllBenchmarkInputState() {
+  const inputStates = {
+    invalid: {
+      input: ["focus:ring-rose-500"],
+      change: ["ring-1", "ring-rose-500"],
+    },
+    empty: {
+      input: ["focus:ring-yellow-500"],
+      change: ["ring-1", "ring-yellow-500"],
+    },
+  };
+  const BENCHMARK_INPUT_HIGHLIGHT_CLASSES = [
+    ...new Set(
+      Object.values(inputStates)
+        .flatMap((state) => Object.values(state))
+        .flat(),
+    ),
+  ];
+
+  DOM.benchmarkInput.classList.remove(...BENCHMARK_INPUT_HIGHLIGHT_CLASSES);
+}
+
+
+function resetBenchmarkInputHighlight() {
+  clearAllBenchmarkInputState();
+  setDefaultState();
+}
+
+const ERROR_BG = {
+  empty: {
+    focus: ["focus:ring-yellow-500"],
+    blur: ["ring-1", "ring-yellow-500"]
+  },
+  invalid: {
+    focus: ["focus:ring-rose-500"],
+    blur: ["ring-1", "ring-rose-500"],
+  },
+};
+
 function resetBenchmarkWarningArea(
-  currentErrorBg = errorUIContext.currentErrorBg,
+  currentErrorBg = benchmarkContext.currentErrorBg,
 ) {
   if (!currentErrorBg) return;
 
@@ -204,15 +240,31 @@ function resetBenchmarkWarningArea(
   DOM.benchmarkWarningArea.classList.remove(currentErrorBg);
 }
 
-function resetBenchmarkInput() {
-  DOM.benchmarkInput.classList.remove(
-    "ring-1",
-    "ring-rose-500",
-    "ring-yellow-500",
-  );
-  DOM.benchmarkInput.classList.remove("focus:ring-1", "focus:ring-rose-500");
-  DOM.benchmarkInput.classList.add("focus:ring-2", "focus:ring-blue-500/60");
-  DOM.benchmarkInput.classList.replace("border-rose-500", "border-gray-300");
+/* show error context */
+function showBenchmarkError(context) {
+  const config = BENCHMARK_INVALID[context.currentError];
+
+  resetBenchmarkWarningArea(benchmarkContext.currentErrorBg);
+
+  DOM.benchmarkWarningArea.classList.remove("hidden");
+  DOM.benchmarkWarningArea.classList.add(config.bg);
+  DOM.benchmarkWarningArea.textContent = config.text;
+  DOM.benchmarkInput.classList.add("ring-1", config.ring);
+  benchmarkContext.currentErrorBg = config.bg;
+}
+
+function showErrorHightlight(currentError, mode) {
+  clearAllBenchmarkInputState();
+  DOM.benchmarkInput.classList.add(...ERROR_BG[currentError][mode]);
+}
+
+
+/* -- Subject UI logic -- */
+
+function invalidSubjectInput() {
+  DOM.subjectErrorInvalid.classList.remove("hidden");
+  DOM.subjectErrorInvalid.classList.add("bg-rose-500");
+  DOM.subjectErrorInvalid.textContent = `Subject input must be a number between 0 and 10.`;
 }
 
 function resetSubject() {
@@ -269,6 +321,19 @@ function resetSubjectWarningEmpty() {
   DOM.subjectWarningEmpty.textContent = "";
 }
 
+/* -- Check Area  UI reset -- */
+function resetCheckArea() {
+  DOM.checkArea.classList.remove(
+    "bg-green-500",
+    "bg-yellow-500",
+    "bg-rose-500",
+  );
+  DOM.happyIcon.classList.add("hidden");
+  DOM.sadIcon.classList.add("hidden");
+  DOM.checkAreaText.textContent = "";
+}
+
+/* -- Input  UI reset -- */
 function resetAllInputValue() {
   const allInputs = [...document.querySelectorAll("input")];
 
@@ -343,7 +408,7 @@ function checkAdmission() {
  * ==========================================
  */
 
-// Main Actions
+/* ==========  Main Actions ==========*/
 DOM.checkBtn.addEventListener("click", checkAdmission);
 
 DOM.resetBtn.addEventListener("click", () => {
@@ -352,47 +417,52 @@ DOM.resetBtn.addEventListener("click", () => {
   resetSubject();
   resetAllInputValue();
   resetAllSelectValue();
+  hasInteracted = false;
 });
 
-// Input Interactions
+/* ==========  Input Interactions ==========*/
+
+/* Benchmark interations */
+
+
+const ERROR_MODE = {
+  FOCUS: "focus",
+  BLUR: "blur",
+};
+
+let hasInteracted = false;
 DOM.benchmarkInput.addEventListener("input", () => {
-  resetBenchmarkInput();
+  hasInteracted = true;
 
-  const value = DOM.benchmarkInput.value;
-
-  if (value === "") {
-    resetBenchmarkInput();
+  const value = DOM.benchmarkInput.value.trim();
+  const state = getBenchmarkState(value);
+  if (state !== "valid") {
+    showErrorHightlight(state, ERROR_MODE.FOCUS);
     return;
   }
 
-  const benchmark = DOM.benchmarkInput.valueAsNumber;
-  if (isNaN(benchmark) || benchmark < 0 || benchmark > 30) {
-    DOM.benchmarkInput.classList.remove(
-      "focus:ring-2",
-      "focus:ring-blue-500/60",
-    );
-    DOM.benchmarkInput.classList.add("focus:ring-1", "focus:ring-rose-500");
-    return;
-  }
+  resetBenchmarkInputHighlight();
 });
 
-DOM.benchmarkInput.addEventListener("change", () => {
-  const value = DOM.benchmarkInput.value;
+DOM.benchmarkInput.addEventListener("blur", () => {
+  if(!hasInteracted) return;
 
-  if (value === "") {
-    resetBenchmarkInput();
+  const value = DOM.benchmarkInput.value.trim();
+
+  const state = getBenchmarkState(value);
+
+  if (state !== "valid") {
+    showErrorHightlight(state, ERROR_MODE.BLUR);
     return;
   }
+   resetBenchmarkInputHighlight();
 
-  const benchmark = DOM.benchmarkInput.valueAsNumber;
-  if (isNaN(benchmark) || benchmark < 0 || benchmark > 30) {
-    DOM.benchmarkInput.classList.replace("border-gray-300", "border-rose-500");
-    return;
-  } else {
-    DOM.benchmarkInput.classList.replace("border-rose-500", "border-gray-300");
-  }
 });
 
+
+
+
+/* Subject interations */
 DOM.subjectInput.forEach((sub, i) => {
   sub.addEventListener("focus", () => {
     resetSubjectInput(false, [i]);
