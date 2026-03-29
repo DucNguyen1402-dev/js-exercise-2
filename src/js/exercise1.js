@@ -10,7 +10,8 @@ try {
   DOM.checkBtn = $(".check__btn");
   DOM.resetBtn = $(".card.admission__management").querySelector(".reset__btn");
   DOM.benchmarkWarningArea = $(".benchmark__warning__area");
-  DOM.subjectWarningArea = $(".subject__warning__area");
+  DOM.subjectErrorInvalid = $(".subject__error--invalid");
+  DOM.subjectWarningEmpty = $(".subject__warning--empty");
   DOM.checkArea = $(".check__area");
   DOM.checkAreaText = DOM.checkArea.querySelector(".check__area__text");
   DOM.sadIcon = DOM.checkArea.querySelector(".sad__icon");
@@ -22,6 +23,13 @@ try {
     console.error("Something went wrong: ", error.message);
   }
 }
+
+/**
+ * ==========================================
+ *          1. CONFIG (DATA)
+ * ==========================================
+ */
+
 const PRIORITY_POINTS = {
   area: { A: 2, B: 1, C: 0.5, X: 0 },
   caterogy: { 1: 2.5, 2: 1.5, 3: 1, 0: 0 },
@@ -29,7 +37,7 @@ const PRIORITY_POINTS = {
 
 /**
  * ==========================================
- *          1. VALIDATE LOGIC
+ *          2. VALIDATE LOGIC
  * ==========================================
  */
 
@@ -37,6 +45,7 @@ function validateBenmarkInput() {
   const value = DOM.benchmarkInput.value;
 
   if (value === "") {
+    resetCheckArea();
     DOM.benchmarkWarningArea.classList.remove("hidden");
     DOM.benchmarkWarningArea.classList.add("bg-yellow-500");
     DOM.benchmarkWarningArea.textContent =
@@ -50,6 +59,7 @@ function validateBenmarkInput() {
   const benchmarkValue = DOM.benchmarkInput.valueAsNumber;
 
   if (isNaN(benchmarkValue) || benchmarkValue < 0 || benchmarkValue > 30) {
+    resetCheckArea();
     invalidBenchmark();
     return {
       isValid: false,
@@ -63,9 +73,18 @@ function validateBenmarkInput() {
 }
 
 function validateSubjectInput() {
+  let isEmpty = false;
+  const emptyIndex = [];
   let invalidSubject = false;
   const invalidIndex = [];
   DOM.subjectInput.forEach((sub, i) => {
+    const value = sub.value;
+    if (value === "") {
+      isEmpty = true;
+      emptyIndex.push(i);
+      return;
+    }
+
     const subjectValue = sub.valueAsNumber;
     if (isNaN(subjectValue) || subjectValue < 0 || subjectValue > 10) {
       invalidSubject = true;
@@ -77,30 +96,52 @@ function validateSubjectInput() {
     invalidIndex.forEach((i) => {
       DOM.subjectInput[i].classList.add("ring-1", "ring-rose-500");
     });
+    resetCheckArea();
     invalidSubjectInput();
+    if (!isEmpty) {
+      return {
+        isValid: false,
+      };
+    }
+  }
+
+  if (isEmpty) {
+    resetSubjectInput(false, emptyIndex);
+    emptyIndex.forEach((i) => {
+      DOM.subjectInput[i].classList.add("ring-1", "ring-yellow-500");
+    });
+    resetCheckArea();
+    DOM.subjectWarningEmpty.classList.remove("hidden");
+    DOM.subjectWarningEmpty.classList.add("bg-yellow-500");
+    DOM.subjectWarningEmpty.textContent =
+      isEmpty > 1
+        ? "Your subject inputs are empty! Please enter a number"
+        : "Your subject input is empty! Please enter a number";
+
     return {
       isValid: false,
     };
-  } else {
-    DOM.subjectInput.forEach((subject) => {
-      subject.classList.remove("ring-1", "ring-rose-500");
-    });
-    resetSubjectWarningArea();
-    return {
-      isValid: true,
-    };
   }
+
+  DOM.subjectInput.forEach((subject) => {
+    subject.classList.remove("ring-1", "ring-rose-500", "ring-yellow-500");
+  });
+  resetSubjectErrorInvalid();
+  resetSubjectWarningEmpty();
+  return {
+    isValid: true,
+  };
 }
 /**
  * ==========================================
- *     2. UI & DOM MANIPULATION (Helpers)
+ *     3. UI & DOM MANIPULATION (Helpers)
  * ==========================================
  */
 
 function invalidSubjectInput() {
-  DOM.subjectWarningArea.classList.remove("hidden");
-  DOM.subjectWarningArea.classList.add("bg-rose-500");
-  DOM.subjectWarningArea.textContent = `Subject input must be a number between 0 and 10.`;
+  DOM.subjectErrorInvalid.classList.remove("hidden");
+  DOM.subjectErrorInvalid.classList.add("bg-rose-500");
+  DOM.subjectErrorInvalid.textContent = `Subject input must be a number between 0 and 10.`;
 }
 
 function resetCheckArea() {
@@ -145,31 +186,57 @@ function invalidBenchmark() {
 }
 
 function resetSubject() {
-  resetSubjectWarningArea();
-  resetSubjectInput(DOM.subjectInput, true);
+  resetSubjectErrorInvalid();
+  resetSubjectInput(true);
 }
 
-function resetSubjectInput(subject = DOM.subjectInput, shouldClearAll = false) {
+function resetSubjectInput(shouldClearAll = false, indexes = []) {
   if (shouldClearAll) {
     DOM.subjectInput.forEach((subject) => {
-      subject.classList.remove("ring-1", "ring-rose-500");
+      subject.classList.remove("ring-1", "ring-rose-500", "ring-yellow-500");
       subject.classList.replace(
         "focus:ring-rose-500",
         "focus:ring-blue-500/60",
       );
-      subject.classList.replace("border-rose-300", "border-gray-300");
+      subject.classList.replace("border-rose-500", "border-gray-300");
     });
-  } else {
-    subject.classList.remove("ring-1", "ring-rose-500");
-    subject.classList.replace("focus:ring-rose-500", "focus:ring-blue-500/60");
-    subject.classList.replace("border-rose-300", "border-gray-300");
+  } else if (indexes) {
+    indexes.forEach((index) => {
+      DOM.subjectInput[index].classList.remove(
+        "ring-1",
+        "ring-rose-500",
+        "ring-yellow-500",
+      );
+      DOM.subjectInput[index].classList.replace(
+        "focus:ring-rose-500",
+        "focus:ring-blue-500/60",
+      );
+      DOM.subjectInput[index].classList.replace(
+        "border-rose-500",
+        "border-gray-300",
+      );
+      DOM.subjectInput[index].classList.replace(
+        "border-yellow-500",
+        "border-gray-300",
+      );
+      DOM.subjectInput[index].classList.replace(
+        "focus:ring-yellow-500",
+        "focus:ring-blue-500/60",
+      );
+    });
   }
 }
 
-function resetSubjectWarningArea() {
-  DOM.subjectWarningArea.classList.add("hidden");
-  DOM.subjectWarningArea.classList.remove("bg-rose-500");
-  DOM.subjectWarningArea.textContent = "";
+function resetSubjectErrorInvalid() {
+  DOM.subjectErrorInvalid.classList.add("hidden");
+  DOM.subjectErrorInvalid.classList.remove("bg-rose-500");
+  DOM.subjectErrorInvalid.textContent = "";
+}
+
+function resetSubjectWarningEmpty() {
+  DOM.subjectWarningEmpty.classList.add("hidden");
+  DOM.subjectWarningEmpty.classList.remove("bg-yellow-500");
+  DOM.subjectWarningEmpty.textContent = "";
 }
 
 function resetAllInputValue() {
@@ -187,7 +254,7 @@ function resetAllSelectValue() {
  *
  *
  * ==========================================
- *    3. CORE CALCULATION & DISPLAY LOGIC
+ *    4. CORE CALCULATION & DISPLAY LOGIC
  * ==========================================
  */
 
@@ -242,7 +309,7 @@ function checkAdmission() {
 
 /**
  * ==========================================
- *          4. EVENT LISTENERS
+ *          5. EVENT LISTENERS
  * ==========================================
  */
 
@@ -296,16 +363,19 @@ DOM.benchmarkInput.addEventListener("change", () => {
   }
 });
 
-DOM.subjectInput.forEach((sub) => {
+DOM.subjectInput.forEach((sub, i) => {
+  sub.addEventListener("focus", () => {
+    resetSubjectInput(false, [i]);
+  });
+
   sub.addEventListener("input", () => {
-    DOM.subjectInput.forEach((subject) => {
-      subject.classList.remove("ring-1", "ring-rose-500");
-    });
     const value = sub.value;
     if (value === "") {
-      resetSubjectInput(sub);
+      resetSubjectInput(false, [i]);
+      sub.classList.replace("focus:ring-blue-500/60", "focus:ring-yellow-500");
       return;
     }
+    resetSubjectInput(false, [i]);
     const subjectValue = sub.valueAsNumber;
     if (isNaN(subjectValue) || subjectValue < 0 || subjectValue > 10) {
       sub.classList.replace("focus:ring-blue-500/60", "focus:ring-rose-500");
@@ -314,17 +384,28 @@ DOM.subjectInput.forEach((sub) => {
     }
   });
 
+  sub.addEventListener("blur", () => {
+    const value = sub.value;
+    if (value === "") {
+      resetSubjectInput(false, [i]);
+      sub.classList.replace("border-gray-300", "border-yellow-500");
+      return;
+    }
+  });
+
   sub.addEventListener("change", () => {
     const value = sub.value;
     if (value === "") {
-      resetSubjectInput(sub);
+      resetSubjectInput(false, [i]);
+      sub.classList.replace("border-gray-300", "border-yellow-500");
       return;
     }
+    resetSubjectInput(false, [i]);
     const subjectValue = sub.valueAsNumber;
     if (isNaN(subjectValue) || subjectValue < 0 || subjectValue > 10) {
-      sub.classList.replace("border-gray-300", "border-rose-300");
+      sub.classList.replace("border-gray-300", "border-rose-500");
     } else {
-      sub.classList.replace("border-rose-300", "border-gray-300");
+      sub.classList.replace("border-rose-500", "border-gray-300");
     }
   });
 });
