@@ -88,23 +88,20 @@ function validateSubjectInput() {
   };
 
   DOM.subjectInput.forEach((sub, i) => {
-    resetSubjectInputUI(false, [i]);
+    subjectInputUI.reset(false, [i]);
 
     const value = sub.value.trim();
     const error = getSubjectError(value);
-
-    if (!error) return;
-
-    errorState[error] = true;
-
-    setSubjectErrorHightlight(i, ERROR_CONFIG[error].highlightClasses);
+    if (!error.state) return;
+    errorState[error.state] = true;
+    setSubjectErrorHightlight(i, ERROR_CONFIG[error.state].highlightClasses);
   });
 
-  errorState.empty ? handleSubjectError("empty") : resetSubjectWarningEmpty();
+  errorState.empty ? handleSubjectError("empty") : resetSubjectError("empty");
 
   errorState.invalid
     ? handleSubjectError("invalid")
-    : resetSubjectErrorInvalid();
+    : resetSubjectError("invalid");
 
   if (errorState.invalid || errorState.empty) {
     return {
@@ -248,48 +245,104 @@ function showErrorHightlight(currentError, mode) {
 
 function resetAllInputValue() {
   const allInputs = [...document.querySelectorAll("input")];
-
   allInputs.forEach((input) => (input.value = ""));
 }
 
 function resetSubjectToDefault() {
   resetSubjectArea();
-  resetSubjectInputUI(true);
+  reset(true);
 }
 
 //INTERNAL
-function setSubjectInteractionDefault(indexes) {
-  indexes.forEach((index) => {
-    DOM.subjectInput[index].classList.add("focus:ring-blue-500/60");
-  });
+
+/*  */
+function setSubjectInteractionDefault(index) {
+  DOM.subjectInput[index].classList.add("focus:ring-blue-500/60");
 }
+
+function getSubjectError(value) {
+  if (value === "") {
+    return {
+      state: "empty",
+      type: null,
+    };
+  }
+
+  const number = Number(value);
+  if (Number.isNaN(number) || number < 0 || number > 10) {
+    return {
+      state: "invalid",
+      type: null,
+    };
+  }
+
+  return {
+    state: null,
+    type: null,
+  };
+}
+
+const INPUT_CLASSES = {
+  input: {
+    default: ["focus:ring-blue-500/60"],
+    empty: ["focus:ring-yellow-500"],
+    invalid: ["focus:ring-rose-500"],
+  },
+  blur: {
+    empty: ["ring-1", "ring-yellow-500"],
+    invalid: ["ring-1", "ring-rose-500"],
+  },
+};
+
+function applyErrorState(el, { state, type }) {
+  const prev = el._errorState;
+
+  if (prev) {
+    const prevConfig = INPUT_CLASSES[prev.type];
+    el.classList.remove(...(prevConfig?.[prev.state] || []));
+  }
+
+  const config = INPUT_CLASSES[type];
+  const classes = config?.[state];
+
+  if (config?.default) {
+    el.classList.remove(...config.default);
+  }
+  if (!classes) return;
+
+  el.classList.add(...classes);
+  el._errorState = { state, type };
+}
+
+const ERROR_UI = {
+  empty: {
+    bg: "bg-yellow-500",
+    message: "Subject input can't be empty! please try again!",
+  },
+  invalid: {
+    bg: "bg-rose-500",
+    message: "Subject input must be a number between 0 and 10.",
+  },
+};
 
 function setSubjectErrorHightlight(index, errorState) {
   DOM.subjectInput[index].classList.add(...errorState);
 }
 
-function getSubjectError(value) {
-  if (value === "") return "empty";
-
-  const number = Number(value);
-  if (Number.isNaN(number) || number < 0 || number > 10) {
-    return "invalid";
-  }
-
-  return null;
-}
-
 function handleSubjectError(typeError) {
   resetCheckArea();
-  if (typeError === "empty") {
-    emptySubjectWarning();
-  } else {
-    invalidSubjectInput();
-  }
+  showError(typeError, ERROR_UI[typeError]);
+}
+function showError(typeError, { bg, message }) {
+  const sub =
+    typeError === "empty" ? DOM.subjectWarningEmpty : DOM.subjectErrorInvalid;
+  sub.classList.remove("hidden");
+  sub.classList.add(bg);
+  sub.textContent = message;
 }
 
-function resetSubjectInputUI(shouldClearAll = false, indexes = []) {
-  const inputStates = {
+const subjectInputUI = {
+  inputStates: {
     invalid: {
       input: ["focus:ring-rose-500"],
       blur: ["ring-1", "ring-rose-500"],
@@ -298,46 +351,50 @@ function resetSubjectInputUI(shouldClearAll = false, indexes = []) {
       input: ["focus:ring-yellow-500"],
       blur: ["ring-1", "ring-yellow-500"],
     },
-  };
-
-  const SUBJECT_INPUT_HIGHLIGHT_CLASSES = [
-    ...new Set(
-      Object.values(inputStates)
-        .flatMap((state) => Object.values(state))
-        .flat(),
-    ),
-  ];
-
-  if (shouldClearAll) {
-    DOM.subjectInput.forEach((subject) => {
-      subject.classList.remove(...SUBJECT_INPUT_HIGHLIGHT_CLASSES);
-    });
-  } else if (indexes) {
-    indexes.forEach((index) => {
-      DOM.subjectInput[index].classList.remove(
-        ...SUBJECT_INPUT_HIGHLIGHT_CLASSES,
-      );
-    });
+  },
+ get highlightClasses() {
+  if (!this._highlightClasses) {
+    this._highlightClasses = [
+      ...new Set(
+        Object.values(this.inputStates)
+          .flatMap((s) => Object.values(s))
+          .flat(),
+      ),
+    ];
   }
-  setSubjectInteractionDefault(indexes);
+  return this._highlightClasses;
+},
+  reset: function (clearAll = false, indexes = []) {
+    const targets = clearAll ? DOM.subjectInput.map((_, i) => i) : indexes;
+
+    targets.forEach((index) => {
+      const el = DOM.subjectInput[index];
+      el.classList.remove(... this.highlightClasses);
+      setSubjectInteractionDefault(index);
+    });
+  },
+};
+
+
+
+
+
+const ERROR_CLASSES = {
+  empty: "bg-rose-500",
+  invalid: "bg-yellow-500",
+};
+
+function resetSubjectError(type) {
+  const sub =
+    type === "empty" ? DOM.subjectWarningEmpty : DOM.subjectErrorInvalid;
+  if (!sub) return;
+
+  sub.classList.add("hidden");
+  sub.classList.remove(ERROR_CLASSES[type]);
+  sub.textContent = "";
 }
 
-function resetSubjectArea() {
-  resetSubjectErrorInvalid();
-  resetSubjectWarningEmpty();
-}
-
-function resetSubjectErrorInvalid() {
-  DOM.subjectErrorInvalid.classList.add("hidden");
-  DOM.subjectErrorInvalid.classList.remove("bg-rose-500");
-  DOM.subjectErrorInvalid.textContent = "";
-}
-
-function resetSubjectWarningEmpty() {
-  DOM.subjectWarningEmpty.classList.add("hidden");
-  DOM.subjectWarningEmpty.classList.remove("bg-yellow-500");
-  DOM.subjectWarningEmpty.textContent = "";
-}
+/* Check Area */
 
 function resetCheckArea() {
   DOM.checkArea.classList.remove(
@@ -348,19 +405,6 @@ function resetCheckArea() {
   DOM.happyIcon.classList.add("hidden");
   DOM.sadIcon.classList.add("hidden");
   DOM.checkAreaText.textContent = "";
-}
-
-function emptySubjectWarning() {
-  DOM.subjectWarningEmpty.classList.remove("hidden");
-  DOM.subjectWarningEmpty.classList.add("bg-yellow-500");
-  DOM.subjectWarningEmpty.textContent =
-    "Subject input can't be empty! please try again!";
-}
-
-function invalidSubjectInput() {
-  DOM.subjectErrorInvalid.classList.remove("hidden");
-  DOM.subjectErrorInvalid.classList.add("bg-rose-500");
-  DOM.subjectErrorInvalid.textContent = `Subject input must be a number between 0 and 10.`;
 }
 
 /* =============SELECT INPUT============= */
@@ -484,49 +528,23 @@ DOM.benchmarkInput.addEventListener("blur", () => {
 
 /* Subject interations */
 
-const DEFAULT_FOCUS_CLASSES = ["focus:ring-blue-500/60"];
+function handleSubjectEvent(e, inputEl, index) {
+  const value = inputEl.value.trim();
+  const error = getSubjectError(value);
 
-const ERROR_INVALID_FOCUS_CLASSES = {
-  empty: "focus:ring-yellow-500",
-  invalid: "focus:ring-rose-500",
-};
+  if (!error.state) {
+    subjectInputUI.reset(false, [index]);
+    return;
+  }
 
-
-function applyErrorFocusState(el, error) {
-  el.classList.remove(... DEFAULT_FOCUS_CLASSES);
-  el.classList.add(ERROR_INVALID_FOCUS_CLASSES[error]);
+  error.type = e.type;
+  applyErrorState(inputEl, error);
 }
 
-DOM.subjectInput.forEach((inputEl, i) => {
-  inputEl.addEventListener("input", () => {
-    const value = inputEl.value.trim();
-    const error = getSubjectError(value);
-
-    resetSubjectInputUI(false, [i]);
-    if (error) {
-      applyErrorFocusState(inputEl, error);
-    }
-  });
-
-
-  sub.addEventListener("blur", () => {
-
-    resetSubjectInputUI(false, [i]);
-
-
-
-    const value = sub.value.trim();
-    if (value === "") {
-      resetSubjectInputUI(false, [i]);
-      sub.classList.add("ring-1", "ring-yellow-500");
-      return;
-    }
-
-    const num = Number(value);
-    if (Number.isNaN(num) || num < 0 || num > 10) {
-      sub.classList.add("ring-1", "ring-rose-500");
-    } else {
-      sub.classList.remove("ring-1", "ring-rose-500");
-    }
+DOM.subjectInput.forEach((inputEl, index) => {
+  ["input", "blur"].forEach((eventName) => {
+    inputEl.addEventListener(eventName, (e) =>
+      handleSubjectEvent(e, inputEl, index),
+    );
   });
 });
