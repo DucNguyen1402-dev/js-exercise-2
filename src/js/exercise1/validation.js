@@ -1,16 +1,19 @@
-import { initBenchmarkDOM, initSubjectDOM } from "./dom.js";
 import {ElementNotFoundError} from "../dom-system.js";
-import {subjectInputUI} from "./main.js"
+import { getBenchmarkDOM, getSubjectDOM } from "./dom.js";
+import {subjectInputUI, renderBenchmarkValidation, renderSubjectValidation, hideAllSubjectErrorMessage} from "./ui-and-dom.js";
 
+
+/**
+ * ==========================================
+ *          0. DOM SETUP
+ * ==========================================
+ */
 
 const DOM = (() => {
   try {
-    const benchmarkDOM = initBenchmarkDOM();
-    const subjectDOM = initSubjectDOM();
-
     return {
-      ...benchmarkDOM,
-      ...subjectDOM,
+      ...getBenchmarkDOM(),
+      ...getSubjectDOM(),
     };
   } catch (error) {
     if (error instanceof ElementNotFoundError) {
@@ -28,7 +31,7 @@ const DOM = (() => {
  * ==========================================
  */
 
-/* ==========  Benchmark Input ==========  */
+/* ============= 2.1 Benchmark input =============== */
 
 
 export function getBenchmarkState(value) {
@@ -60,7 +63,28 @@ export function validateBenchmarkInput() {
   return context;
 }
 
-/* ========== Subject Input ========== */
+export function isBenchmarkInputValid() {
+  const context = validateBenchmarkInput();
+  renderBenchmarkValidation(context);
+  return !context.currentError;
+}
+
+
+
+
+export function checkAndDisplaySubjectErrors() {
+  const { result, isValid } = validateSubject();
+  if (!isValid) {
+    renderSubjectValidation(result);
+    return false;
+  }
+  hideAllSubjectErrorMessage();
+  return true;
+}
+
+
+
+/* ===============2.2  Subject Input===============  */
 
 
 function setSubjectInputErrorHighlight(index, errorState) {
@@ -86,6 +110,16 @@ export function getSubjectError(value) {
   return {
     state: null,
     type: null,
+  };
+}
+
+
+export function validateSubject() {
+  const result = subjectValidation.validate();
+  const isValid = !(result.empty || result.invalid);
+  return {
+    result,
+    isValid,
   };
 }
 

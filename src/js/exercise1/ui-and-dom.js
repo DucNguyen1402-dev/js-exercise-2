@@ -1,15 +1,22 @@
-import { initDOM } from "./dom.js";
-import {
-  validateBenchmarkInput,
-  getBenchmarkState,
-  getSubjectError,
-  subjectValidation,
-} from "./validation.js";
 import { ElementNotFoundError } from "../dom-system.js";
+import {getCheckAreaDOM, getBenchmarkDOM, getSubjectDOM} from "./dom.js";
+
+
+
+/**
+ * ==========================================
+ *    00. DOM SETUP
+ * ==========================================
+ */
 
 const DOM = (() => {
   try {
-    return initDOM();
+    return {
+       ...getCheckAreaDOM(),
+       ...getBenchmarkDOM(),
+       ...getSubjectDOM(),
+    };
+
   } catch (error) {
     if (error instanceof ElementNotFoundError) {
       console.error(error.message);
@@ -22,24 +29,12 @@ const DOM = (() => {
 
 /**
  * ==========================================
- *          1. CONFIG (DATA)
+ *         1. BENCHMARK INPUT
  * ==========================================
  */
 
-const PRIORITY_POINTS = {
-  area: { A: 2, B: 1, C: 0.5, X: 0 },
-  caterogy: { 1: 2.5, 2: 1.5, 3: 1, 0: 0 },
-};
 
-/**
- * ==========================================
- *     2. UI & DOM MANIPULATION (Helpers)
- * ==========================================
- */
-
-/* =============BENCHMARK INPUT============= */
-
-/* -- benchmark state -- */
+/* ============= 1.1 STATE ============= */
 const BENCHMARK_INVALID = {
   empty: {
     bg: "bg-yellow-500",
@@ -57,26 +52,26 @@ const benchmarkContext = {
   currentErrorBg: null,
 };
 
-/* ---- benchmark UI logic ---- */
+/* ============= 1.2 UI LOGIC ============= */
 
-// PUBLIC API
+// ============= PUBLIC API
 
-function resetBenchmark() {
+export function resetBenchmark() {
   resetBenchmarkWarningArea();
   resetBenchmarkInputHighlight();
 }
 
-// INTERNAL
+// ============= INTERNAL
 
 /* 1. CONFIGURATION & CONSTANTS */
 
 const ERROR_BG = {
   empty: {
-    focus: ["focus:ring-yellow-500"],
+    input: ["focus:ring-yellow-500"],
     blur: ["ring-1", "ring-yellow-500"],
   },
   invalid: {
-    focus: ["focus:ring-rose-500"],
+    input: ["focus:ring-rose-500"],
     blur: ["ring-1", "ring-rose-500"],
   },
 };
@@ -88,13 +83,13 @@ function setDefaultState() {
   DOM.benchmarkInput.classList.add("focus:ring-blue-500/60");
 }
 
-function handleBenmarkErrorUI(context) {
+export function handleBenmarkErrorUI(context) {
   resetCheckArea();
   showBenchmarkError(context);
 }
 
 //-- Reset warning text
-function resetBenchmarkWarningArea(
+export function resetBenchmarkWarningArea(
   currentErrorBg = benchmarkContext.currentErrorBg,
 ) {
   if (!currentErrorBg) return;
@@ -105,7 +100,7 @@ function resetBenchmarkWarningArea(
 }
 
 //-- show error hightlight
-function showErrorHightlight(currentError, mode) {
+export function showErrorHightlight(currentError, mode) {
   clearAllBenchmarkInputErrorState();
   DOM.benchmarkInput.classList.add(...ERROR_BG[currentError][mode]);
 }
@@ -147,26 +142,31 @@ function clearAllBenchmarkInputErrorState() {
 }
 
 /* 3. ORCHESTRATION (Logic handlers) */
-function resetBenchmarkInputHighlight() {
+export function resetBenchmarkInputHighlight() {
   clearAllBenchmarkInputErrorState();
   setDefaultState();
 }
 
-/* =============SUBJECT INPUT============= */
+/**
+ * ==========================================
+ *           2. SUBJECT INPUT
+ * ==========================================
+ */
 
-// PUBLIC API
 
-function resetAllInputValue() {
+// ============== PUBLIC API
+
+export function resetAllInputValue() {
   const allInputs = [...document.querySelectorAll("input")];
   allInputs.forEach((input) => (input.value = ""));
 }
 
-function resetSubjectToDefault() {
-  hideAllSubjectErrorMessages();
+export function resetSubjectToDefault() {
+  hideAllSubjectErrorMessage();
   subjectInputUI.reset(true);
 }
 
-//INTERNAL
+// /============== INTERNAL
 
 /* 1. CONFIGURATION & CONSTANTS */
 const ERROR_CLASSES = {
@@ -204,7 +204,7 @@ const ERROR_UI = {
 
 /* 2. LOW-LEVEL UI FUNCTIONS (DOM Manipulation) */
 
-function applySubjectInputErrorState(el, { state, type }) {
+export function applySubjectInputErrorState(el, { state, type }) {
   const prev = el._errorState;
 
   if (prev) {
@@ -231,11 +231,11 @@ function showSubjectErrorMessage(typeError, { bg, message }) {
   el.textContent = message;
 }
 
-function hideAllSubjectErrorMessage() {
+export function hideAllSubjectErrorMessage() {
   Object.keys(ERROR_MAP).forEach(hideSubjectErrorMessage);
 }
 
-function hideSubjectErrorMessage(type) {
+export function hideSubjectErrorMessage(type) {
   const el = ERROR_MAP[type];
   if (!el) return;
 
@@ -246,9 +246,29 @@ function hideSubjectErrorMessage(type) {
 
 /* 3. ORCHESTRATION (Logic handlers) */
 
-function handleSubjectErrorMessage(typeError) {
+export function handleSubjectErrorMessage(typeError) {
   resetCheckArea();
   showSubjectErrorMessage(typeError, ERROR_UI[typeError]);
+}
+
+export function renderBenchmarkValidation(context) {
+  if (context.currentError) {
+    handleBenmarkErrorUI(context);
+    return;
+  }
+
+  resetBenchmarkWarningArea();
+}
+
+
+export function renderSubjectValidation(context) {
+  context.empty
+    ? handleSubjectErrorMessage("empty")
+    : hideSubjectErrorMessage("empty");
+
+  context.invalid
+    ? handleSubjectErrorMessage("invalid")
+    : hideSubjectErrorMessage("invalid");
 }
 
 /* 4. MODULE / EXPORT OBJECT */
@@ -289,8 +309,13 @@ export const subjectInputUI = {
   },
 };
 
-/* =============CHECK AREA============= */
+/**
+ * ==========================================
+ *           3. CHECK AREA
+ * ==========================================
+ */
 
+/*=========== 3.1 STATE =========== */
 const STATE_CONFIG = {
   success: {
     bg: "bg-green-500",
@@ -306,7 +331,9 @@ const STATE_CONFIG = {
   },
 };
 
-function resetCheckArea() {
+/*=========== 3.2 RESET UI =========== */
+
+export function resetCheckArea() {
   const currentState = DOM.checkArea._state;
   if (!currentState) return;
 
@@ -318,228 +345,28 @@ function resetCheckArea() {
   DOM.checkAreaText.textContent = "";
 }
 
-/* =============SELECT INPUT============= */
-
-function resetAllSelectValue() {
+/**
+ * ==========================================
+ *           4. SELECT INPUT
+ * ==========================================
+ */
+export function resetAllSelectValue() {
   [...document.querySelectorAll("select")].forEach(
     (select) => (select.value = select.dataset.default),
   );
 }
 
-/**
- *
- *
- * ==========================================
- *    4. CORE CALCULATION & DISPLAY LOGIC
- * ==========================================
- */
-
-function calculateFinalScore() {
-  const area = DOM.selectArea.value;
-  const category = DOM.selectCaterogy.value;
-
-  const priorityPoint =
-    PRIORITY_POINTS.area[area] + PRIORITY_POINTS.caterogy[category];
-
-  let totalSubject = 0;
-  let hasZeroScore = false;
-  DOM.subjectInput.forEach((sub) => {
-    const score = sub.valueAsNumber;
-    totalSubject += score;
-    if (score === 0) hasZeroScore = true;
-  });
-
-  return { finalScore: priorityPoint + totalSubject, hasZeroScore };
-}
-
-const areaState = {
-  success: "success",
-  failed: "failed",
-  hasZeroScore: "hasZeroScore",
-};
-DOM.checkArea._state = null;
-
-const DISPLAY = {
-  hasZeroScore: {
-    bg: "bg-rose-500",
-    icon: DOM.sadIcon,
-    message:
-      "Unfortunately, you did not pass due to a score of 0 in one or more subjects.",
-  },
-  success: {
-    bg: "bg-green-500",
-    icon: DOM.happyIcon,
-    message: `Congratulations! You passed.`,
-  },
-  failed: {
-    bg: "bg-purple-500",
-    icon: DOM.sadIcon,
-    message: `Unfortunately, you did not pass.`,
-  },
-};
-
-function displayResult(state, finalScore) {
-  resetCheckArea();
-
-  const config = DISPLAY[state];
-  DOM.checkArea.classList.add(config.bg);
-  config.icon.classList.remove("hidden");
-  DOM.checkAreaText.textContent = config.message + `Your score: ${finalScore}`;
-}
-
-function getState(result) {
-  if (result.hasZeroScore) {
-    return areaState.hasZeroScore;
-  }
-  const benchmark = DOM.benchmarkInput.valueAsNumber;
-  if (result.finalScore >= benchmark) {
-    return areaState.success;
-  }
-
-  if (result.finalScore < benchmark) {
-    return areaState.failed;
-  }
-}
-
-function handleResult() {
-  const result = calculateFinalScore();
-
-  const state = getState(result);
-
-  displayResult(state, result.finalScore);
-
-  DOM.checkArea._state = state;
-}
-
-function renderBenchmarkValidation(context) {
-  if (context.currentError) {
-    handleBenmarkErrorUI(context);
-    return;
-  }
-
-  resetBenchmarkWarningArea();
-}
-
-function isBenchmarkInputValid() {
-  const context = validateBenchmarkInput();
-  renderBenchmarkValidation(context);
-  return !context.currentError;
-}
-
-function renderSubjectValidation(context) {
-  context.empty ?
-   handleSubjectErrorMessage("empty")
-   :hideSubjectErrorMessage("empty");
-
-  context.invalid ?
-    handleSubjectErrorMessage("invalid")
-    :hideSubjectErrorMessage("invalid");
-  
-}
-
-function validateSubject() {
-  const result = subjectValidation.validate();
-  const isValid = !(result.empty || result.invalid);
-  return {
-    result,
-    isValid,
-  };
-}
-
-function checkAndDisplaySubjectErrors() {
-  const { result, isValid } = validateSubject();
-  if (!isValid) {
-    renderSubjectValidation(result);
-    return false;
-  }
-  hideAllSubjectErrorMessage();
-  return true;
-}
-
-
-function handleCheckAdmission() {
-  const isSubjectValid = checkAndDisplaySubjectErrors();
-  const isBenchmarkValid = isBenchmarkInputValid();
-  if (!isSubjectValid || !isBenchmarkValid) {
-    return;
-  }
-  handleResult();
-}
 
 /**
  * ==========================================
- *          5. EVENT LISTENERS
+ *           5. RESET UI
  * ==========================================
  */
 
-/* ==========  Main Actions ==========*/
-DOM.checkBtn.addEventListener("click", handleCheckAdmission);
-
-DOM.resetBtn.addEventListener("click", () => {
-  resetCheckArea();
+export function resetUI(){
   resetBenchmark();
-  resetSubjectToDefault();
   resetAllInputValue();
+  resetSubjectToDefault();
   resetAllSelectValue();
-  hasInteracted = false;
-});
-
-/* ==========  Input Interactions ==========*/
-
-/* Benchmark interations */
-
-const ERROR_MODE = {
-  FOCUS: "focus",
-  BLUR: "blur",
-};
-
-let hasInteracted = false;
-DOM.benchmarkInput.addEventListener("input", () => {
-  hasInteracted = true;
-
-  const value = DOM.benchmarkInput.value.trim();
-  const state = getBenchmarkState(value);
-  if (state !== "valid") {
-    showErrorHightlight(state, ERROR_MODE.FOCUS);
-    return;
-  }
-
-  resetBenchmarkInputHighlight();
-});
-
-DOM.benchmarkInput.addEventListener("blur", () => {
-  if (!hasInteracted) return;
-
-  const value = DOM.benchmarkInput.value.trim();
-
-  const state = getBenchmarkState(value);
-
-  if (state !== "valid") {
-    showErrorHightlight(state, ERROR_MODE.BLUR);
-    return;
-  }
-  resetBenchmarkInputHighlight();
-});
-
-/* Subject interations */
-
-function handleSubjectEvent(e, inputEl, index) {
-  const value = inputEl.value.trim();
-  const error = getSubjectError(value);
-
-  if (!error.state) {
-    subjectInputUI.reset(false, [index]);
-    return;
-  }
-
-  error.type = e.type;
-  applySubjectInputErrorState(inputEl, error);
+  resetCheckArea();
 }
-
-DOM.subjectInput.forEach((inputEl, index) => {
-  ["input", "blur"].forEach((eventName) => {
-    inputEl.addEventListener(eventName, (e) =>
-      handleSubjectEvent(e, inputEl, index),
-    );
-  });
-});

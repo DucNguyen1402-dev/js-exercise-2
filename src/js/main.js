@@ -91,7 +91,7 @@ DOM.cards.forEach((card) => {
       card.classList.add("active-card");
       card.querySelector(".backdrop").classList.add("-translate-y-full");
       card.classList.remove("hover:-translate-y-4");
-  });
+  },20);
 })});
 
 function closeCard() {
