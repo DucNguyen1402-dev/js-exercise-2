@@ -1,5 +1,12 @@
 import { $, $$, ElementNotFoundError } from "./dom-system.js";
 
+
+
+/**
+ * ==========================================
+ *          0. DOM SETUP
+ * ==========================================
+ */
 const DOM = {};
 
 try {

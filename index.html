@@ -22,7 +22,7 @@
 
     <script type="module" src="./src/js/main.js"></script>
     <script type="module" src="./src/js/exercise1/controller.js"></script>
-    <script type="module" src="./src/js/exercise2.js"></script>
+    <script type="module" src="./src/js/exercise3/controller.js"></script>
 
     <!--<script type="module" src="./src/js/exercise3.js"></script>
     <script type="module" src="./src/js/exercise4.js"></script> -->
@@ -43,6 +43,7 @@
     <main
       class="card-container mx-auto grid max-w-4xl grid-cols-2 place-items-center gap-x-10 gap-y-16"
     >
+      <!-- excersice 1 -->
       <article
         class="card admission__management group closed-card relative max-w-md cursor-pointer overflow-hidden rounded-lg border border-slate-100 bg-gray-100 p-4 pb-16 transition-all duration-500 ease-in-out hover:-translate-y-4 will-change-transform"
       >
@@ -190,7 +191,7 @@
         </button>
 
         <div
-          class="backdrop absolute inset-0 z-10 flex items-center justify-center bg-linear-to-br from-indigo-600 to-purple-600 text-slate-200 transition duration-1000 group-hover:from-indigo-700 group-hover:to-purple-700 group-hover:text-slate-100"
+          class="backdrop absolute inset-0 z-10 flex items-center justify-center bg-linear-to-br from-blue-600 to-cyan-600 text-slate-200 transition duration-1000 group-hover:from-blue-700 group-hover:to-cyan-700 group-hover:text-slate-100"
         >
           <h2 class="text-xl font-bold tracking-wider">
             01. ADMISSION MANAGEMENT
@@ -198,6 +199,7 @@
         </div>
       </article>
 
+      <!-- excersice 2 -->
       <article
         class="card electricity__calculator group closed-card relative h-120 max-w-md cursor-pointer overflow-hidden rounded-lg border border-slate-100 bg-gray-100 p-4 pb-6 transition duration-500 hover:-translate-y-4"
       >
@@ -269,10 +271,110 @@
         </button>
 
         <div
-          class="backdrop absolute inset-0 z-10 flex items-center justify-center bg-linear-to-br from-indigo-600 to-purple-600 text-slate-200 transition duration-1000 group-hover:from-indigo-700 group-hover:to-purple-700 group-hover:text-slate-100"
+          class="backdrop absolute inset-0 z-10 flex items-center justify-center bg-linear-to-br from-blue-600 to-cyan-600 text-slate-200 transition duration-1000 group-hover:from-blue-700 group-hover:to-cyan-700 group-hover:text-slate-100"
         >
           <h2 class="text-xl font-bold tracking-wider">
             02. ELECTRICITY BILL CALCULATOR
+          </h2>
+        </div>
+      </article>
+
+      <!-- excersice 3 -->
+      <article
+        class="card tax__calculator group closed-card relative h-120 max-w-md cursor-pointer overflow-hidden rounded-lg border border-slate-100 bg-gray-100 p-4 pb-6 transition duration-500 hover:-translate-y-4"
+      >
+        <p class="text-slate-500">
+          Automated Personal Income Tax calculator that computes tax liabilities
+          based on annual income and dependents using progressive tax brackets.
+        </p>
+        <div class="mt-6">
+          <div class="flex flex-col gap-2">
+            <label
+              for="fullName"
+              class="cursor-pointer text-sm font-medium text-gray-400"
+              >Full Name</label
+            >
+            <input
+              type="text"
+              id="fullName"
+              name="fullName"
+              class="name__input w-full rounded-sm border border-gray-300 bg-white px-2 py-1.5 placeholder:text-sm placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500/60 focus:outline-none"
+              placeholder="e.g. Nguyen Van A"
+               spellcheck="false"
+            />
+          </div>
+          <div class="mt-4 flex flex-col gap-2">
+            <label
+              for="annualIncome"
+              class="cursor-pointer text-sm font-medium text-gray-400"
+              >Total Annual Income (Million VND)</label
+            >
+            <input
+              type="number"
+              id="annualIncome"
+              name="number"
+              class="income__input w-full rounded-sm border border-gray-300 bg-white px-2 py-1.5 placeholder:text-sm placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500/60 focus:outline-none"
+              placeholder="e.g. 15.000.000đ"
+              step="0.1"
+            />
+          </div>
+        </div>
+        <div class="mt-4 flex flex-col gap-2">
+          <label
+            for="dependents"
+            class="cursor-pointer text-sm font-medium text-gray-400"
+            >Number of Dependents</label
+          >
+          <input
+            type="number"
+            id="dependents"
+            name="number"
+            class="dependent__input w-full rounded-sm border border-gray-300 bg-white px-2 py-1.5 placeholder:text-sm placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500/60 focus:outline-none"
+            placeholder="e.g. 2"
+          />
+        </div>
+
+        <div class="result__area mt-8">
+          <div
+            class="tax__message hidden rounded-sm bg-blue-600 px-3 py-2 text-slate-100"
+          >
+            <span>
+              Hi
+              <span class="customer__name__display font-medium underline"></span
+              >,
+            </span>
+            <div>
+              <span>Your estimated income tax is:</span>
+              <span class="tax__value font-bold">0đ</span>
+            </div>
+          </div>
+          <div class="warning__area">
+            <p
+              class="name__warning hidden rounded-sm bg-yellow-500 px-3 py-2 text-white"
+            ></p>
+            <p
+              class="income__warning hidden rounded-sm bg-yellow-500 px-3 py-2 text-white"
+            ></p>
+            <p
+              class="dependent__area hidden rounded-sm bg-yellow-500 px-3 py-2 text-white"
+            ></p>
+            
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="calculate__btn absolute bottom-2 right-2 cursor-pointer rounded-md border-none bg-blue-500 px-4 py-2 text-sm text-white transition-colors duration-300 hover:bg-blue-600"
+        >
+          Calculate Tax
+        </button>
+        <button type="button" class="reset__btn hidden">reset</button>
+
+        <div
+          class="backdrop absolute inset-0 z-10 flex items-center justify-center bg-linear-to-br from-blue-600 to-cyan-600 text-slate-200 transition duration-1000 group-hover:from-blue-700 group-hover:to-cyan-700 group-hover:text-slate-100"
+        >
+          <h2 class="text-xl font-bold tracking-wider text-center">
+            03. PERSONAL INCOME TAX CALCULATOR
           </h2>
         </div>
       </article>
