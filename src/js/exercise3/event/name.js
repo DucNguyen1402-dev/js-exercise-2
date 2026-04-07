@@ -1,13 +1,19 @@
 import { ElementNotFoundError } from "../../dom-system.js";
 import { getNameInputDOM } from "../dom.js";
-import { validateName } from "../validation.js";
-import { clearErrorState, applyErrorState } from "../ui-and-dom.js";
+import { validateName } from "../validation/name.js";
+import { clearNameInteractionErrorHighlight, applyNameInteractionErrorHighlight } from "../ui/name.js";
+
+/*
+/**
+ * ==========================================
+ *           0. DOM SETUP
+ * ==========================================
+ */
 
 const DOM = (() => {
   try {
-    return {
-      ...getNameInputDOM(),
-    };
+    return getNameInputDOM();
+
   } catch (error) {
     if (error instanceof ElementNotFoundError) {
       console.error(error.message);
@@ -17,20 +23,30 @@ const DOM = (() => {
   }
 })();
 
+/*
+/**
+ * ==========================================
+ *           1. NAME-RELATED EVENT
+ * ==========================================
+ */
+
+/* ============ 1.1 DATA CONFIG ============= */
+
+let currentError = null;
+
+/* ============ 1.2 EVENT HANDLERS ============= */
+
+
 function handleNameInputInteraction(event) {
   const input = DOM.nameInput;
   const value = input.value.trim();
   const state = validateName(value);
 
-  clearErrorState(input);
+  clearNameInteractionErrorHighlight(input, currentError);
 
   if (state.isValid) return;
 
-  if (event.type === "input") {
-    input.classList.remove("focus:ring-blue-500/60");
-  }
-
-  applyErrorState(input, event.type, state.error.type);
+  currentError = applyNameInteractionErrorHighlight(input, event.type, state.error.type);
 }
 
 export function initNameInputEvent() {
@@ -39,4 +55,9 @@ export function initNameInputEvent() {
       handleNameInputInteraction(e);
     });
   });
+}
+
+
+export function resetNameInteractionHighlightToDefault(){
+  clearNameInteractionErrorHighlight(DOM.nameInput, currentError);
 }

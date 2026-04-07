@@ -183,12 +183,7 @@
           Check result
         </button>
 
-        <button
-          type="button"
-          class="reset__btn hidden absolute bottom-2 left-2 cursor-pointer rounded-md bg-red-500 px-2 py-1 text-sm text-white transition-colors duration-300 hover:bg-red-600"
-        >
-          reset
-        </button>
+        <button type="button" class="reset__btn hidden"></button>
 
         <div
           class="backdrop absolute inset-0 z-10 flex items-center justify-center bg-linear-to-br from-blue-600 to-cyan-600 text-slate-200 transition duration-1000 group-hover:from-blue-700 group-hover:to-cyan-700 group-hover:text-slate-100"
@@ -281,7 +276,7 @@
 
       <!-- excersice 3 -->
       <article
-        class="card tax__calculator group closed-card relative h-120 max-w-md cursor-pointer overflow-hidden rounded-lg border border-slate-100 bg-gray-100 p-4 pb-6 transition duration-500 hover:-translate-y-4"
+        class="card tax__calculator group closed-card relative h-150 max-w-md cursor-pointer overflow-hidden rounded-lg border border-slate-100 bg-gray-100 p-4 pb-6 transition duration-500 hover:-translate-y-4"
       >
         <p class="text-slate-500">
           Automated Personal Income Tax calculator that computes tax liabilities
@@ -300,8 +295,11 @@
               name="fullName"
               class="name__input w-full rounded-sm border border-gray-300 bg-white px-2 py-1.5 placeholder:text-sm placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500/60 focus:outline-none"
               placeholder="e.g. Nguyen Van A"
-               spellcheck="false"
+              spellcheck="false"
             />
+            <p
+              class="name__warning hidden rounded-sm bg-yellow-500 px-3 py-1.5 text-sm text-white"
+            ></p>
           </div>
           <div class="mt-4 flex flex-col gap-2">
             <label
@@ -314,9 +312,12 @@
               id="annualIncome"
               name="number"
               class="income__input w-full rounded-sm border border-gray-300 bg-white px-2 py-1.5 placeholder:text-sm placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500/60 focus:outline-none"
-              placeholder="e.g. 15.000.000đ"
+              placeholder="e.g. 100 (for 100,000,000 VND)"
               step="0.1"
             />
+            <p
+              class="income__warning hidden rounded-sm bg-yellow-500 text-sm px-3 py-1.5 text-white"
+            ></p>
           </div>
         </div>
         <div class="mt-4 flex flex-col gap-2">
@@ -332,6 +333,9 @@
             class="dependent__input w-full rounded-sm border border-gray-300 bg-white px-2 py-1.5 placeholder:text-sm placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500/60 focus:outline-none"
             placeholder="e.g. 2"
           />
+          <p
+            class="dependent__warning hidden rounded-sm bg-yellow-500 px-3 text-sm py-1.5 text-white"
+          ></p>
         </div>
 
         <div class="result__area mt-8">
@@ -340,25 +344,13 @@
           >
             <span>
               Hi
-              <span class="customer__name__display font-medium underline"></span
-              >,
+              <span class="name__display font-medium underline"></span>,
             </span>
             <div>
               <span>Your estimated income tax is:</span>
-              <span class="tax__value font-bold">0đ</span>
+              <span class="tax__value font-bold"></span>
+              <span>(Million VND)</span>
             </div>
-          </div>
-          <div class="warning__area">
-            <p
-              class="name__warning hidden rounded-sm bg-yellow-500 px-3 py-2 text-white"
-            ></p>
-            <p
-              class="income__warning hidden rounded-sm bg-yellow-500 px-3 py-2 text-white"
-            ></p>
-            <p
-              class="dependent__area hidden rounded-sm bg-yellow-500 px-3 py-2 text-white"
-            ></p>
-            
           </div>
         </div>
 
@@ -368,7 +360,7 @@
         >
           Calculate Tax
         </button>
-        <button type="button" class="reset__btn hidden">reset</button>
+        <button type="button" class="reset__btn hidden">Reset</button>
 
         <div
           class="backdrop absolute inset-0 z-10 flex items-center justify-center bg-linear-to-br from-blue-600 to-cyan-600 text-slate-200 transition duration-1000 group-hover:from-blue-700 group-hover:to-cyan-700 group-hover:text-slate-100"

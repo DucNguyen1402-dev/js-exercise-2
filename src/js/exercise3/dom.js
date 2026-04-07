@@ -10,13 +10,14 @@ import { $ } from "../dom-system.js";
 export function getResultArea(){
   return{
     taxMessage: $(".tax__message"),
-    taxValue : DOM.taxMessage.querySelector(".tax__value")
+    taxValue : $(".tax__message").querySelector(".tax__value"),
+    nameDisplay: $(".tax__message").querySelector(".name__display")
   };
 }
 export function getBtnDOM() {
   return {
     calculateBtn: $(".calculate__btn"),
-    resetBtn: $(".reset__btn"),
+    resetBtn: $(".tax__calculator").querySelector(".reset__btn"),
   };
 }
 
@@ -36,9 +37,8 @@ export function getIncomeInputDOM() {
 
 export function getDependentInputDOM() {
   return {
-    dependent: $(".dependent__input"),
+    dependentInput: $(".dependent__input"),
     dependentWarning: $(".tax__calculator").querySelector(
-      ".dependent__warning",
-    ),
+      ".dependent__warning"),
   };
 }

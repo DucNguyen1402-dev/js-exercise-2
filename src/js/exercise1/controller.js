@@ -35,9 +35,10 @@ const DOM = (() => {
 
 /**
  * =========================================
- * 1. Entry point for handling admission check
- * ===========================================
+ *  1. HANDLE CHECK ADMISSION (ENTRY POINT)
+ * =========================================
  */
+
 
 function handleCheckAdmission() {
   const isSubjectValid = checkAndDisplaySubjectErrors();
@@ -49,17 +50,18 @@ function handleCheckAdmission() {
 }
 
 /**
- * =======================================
- *  2. Attach main action to check button
- * =====================================
+ * ==================================
+ *     2. MAIN EVENT HANLDER
+ * ==================================
  */
+
 
 DOM.checkBtn.addEventListener("click", handleCheckAdmission);
 
 /**
- * =========================================
- *  3. Init Benchmark and subject event
- * =========================================
+ * ==================================
+ *     3. INPUT EVENT SETUP
+ * ==================================
  */
 
 initBenmarkEvent();
@@ -67,7 +69,7 @@ initSubjecEvent();
 
 /**
  * =========================================
- *  4. Bind reset handler to reset button
+ *  4. RESET BUTTON EVENT SETUP
  * =========================================
  */
 

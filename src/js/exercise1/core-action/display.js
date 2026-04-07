@@ -60,3 +60,4 @@ export function displayResult(state, finalScore) {
   config.icon.classList.remove("hidden");
   DOM.checkAreaText.textContent = config.message + ` Your score: ${finalScore}`;
 }
+
