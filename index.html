@@ -22,7 +22,9 @@
 
     <script type="module" src="./src/js/main.js"></script>
     <script type="module" src="./src/js/exercise1/controller.js"></script>
+    <script type="module" src="./src/js/exercise2.js"></script>
     <script type="module" src="./src/js/exercise3/controller.js"></script>
+    <script type="module" src="./src/js/exercise4/controller.js"></script>
 
     <!--<script type="module" src="./src/js/exercise3.js"></script>
     <script type="module" src="./src/js/exercise4.js"></script> -->
@@ -41,7 +43,7 @@
       </h1>
     </div>
     <main
-      class="card-container mx-auto grid max-w-4xl grid-cols-2 place-items-center gap-x-10 gap-y-16"
+      class="card-container mx-auto grid max-w-3xl grid-cols-2 place-items-center gap-8"
     >
       <!-- excersice 1 -->
       <article
@@ -188,7 +190,7 @@
         <div
           class="backdrop absolute inset-0 z-10 flex items-center justify-center bg-linear-to-br from-blue-600 to-cyan-600 text-slate-200 transition duration-1000 group-hover:from-blue-700 group-hover:to-cyan-700 group-hover:text-slate-100"
         >
-          <h2 class="text-xl font-bold tracking-wider">
+          <h2 class="text-lg font-bold tracking-wider">
             01. ADMISSION MANAGEMENT
           </h2>
         </div>
@@ -268,7 +270,7 @@
         <div
           class="backdrop absolute inset-0 z-10 flex items-center justify-center bg-linear-to-br from-blue-600 to-cyan-600 text-slate-200 transition duration-1000 group-hover:from-blue-700 group-hover:to-cyan-700 group-hover:text-slate-100"
         >
-          <h2 class="text-xl font-bold tracking-wider">
+          <h2 class="text-lg font-bold tracking-wider text-center">
             02. ELECTRICITY BILL CALCULATOR
           </h2>
         </div>
@@ -365,8 +367,133 @@
         <div
           class="backdrop absolute inset-0 z-10 flex items-center justify-center bg-linear-to-br from-blue-600 to-cyan-600 text-slate-200 transition duration-1000 group-hover:from-blue-700 group-hover:to-cyan-700 group-hover:text-slate-100"
         >
-          <h2 class="text-xl font-bold tracking-wider text-center">
+          <h2 class="text-lg font-bold tracking-wider text-center">
             03. PERSONAL INCOME TAX CALCULATOR
+          </h2>
+        </div>
+      </article>
+
+      <!-- exercise 4 -->
+      <article
+        class="card cable__billing group closed-card relative h-150 max-w-md cursor-pointer overflow-hidden rounded-lg border border-slate-100 bg-gray-100 p-4 pb-6 transition duration-500 hover:-translate-y-4"
+      >
+        <p class="text-slate-500">
+          Please enter your customer ID and select the account type. The system
+          will automatically enable the connection field for Business accounts
+          to ensure an accurate total calculation.
+        </p>
+        <form class="mt-6">
+          <div class="flex flex-col gap-2">
+            <label
+              for="customer-id"
+              class="cursor-pointer text-sm font-medium text-gray-400"
+              >Customer ID</label
+            >
+            <input
+              type="text"
+              id="customer-id"
+              name="customer-id"
+              class="customer__id__input w-full rounded-sm border border-gray-300 bg-white px-2 py-1.5 placeholder:text-sm placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500/60 focus:outline-none"
+              placeholder="e.g. CUST001"
+              spellcheck="false"
+            />
+            <p
+              class="customer__id__warning hidden rounded-sm bg-yellow-500 px-3 py-1.5 text-sm text-white"
+            ></p>
+          </div>
+          <div class="mt-4 flex flex-col gap-2">
+            <label
+              for="customer-type"
+              class="cursor-pointer text-sm font-medium text-gray-400"
+              >Customer Type</label
+            >
+            <select
+              id="customer-type"
+              class="select__type appearance-none w-full px-4 py-2 text-gray-500 bg-white border border-gray-400/80 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-transparent cursor-pointer transition-all duration-200 relative z-0"
+            >
+              <option value="" selected disabled>Select account type...</option>
+              <option value="residential">Residential</option>
+              <option value="business">Business</option>
+            </select>
+            <p
+              class="customer_type__warning hidden rounded-sm bg-yellow-500 text-sm px-3 py-1.5 text-white"
+            ></p>
+          </div>
+          <div class="mt-4 hidden">
+            <label
+              for="connections"
+              class="cursor-pointer text-sm font-medium text-gray-400"
+              >Number of Connections</label
+            >
+            <input
+              type="number"
+              id="connections"
+              name="connections"
+              class="connections__input w-full mt-2 rounded-sm border border-gray-300 bg-white px-2 py-1.5 placeholder:text-sm placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500/60 focus:outline-none"
+              placeholder="e.g. 15"
+              min="0"
+            />
+            <p
+              class="connection__warning hidden rounded-sm bg-yellow-500 px-3 text-sm py-1.5 text-white"
+            ></p>
+          </div>
+
+          <div class="mt-4 flex flex-col gap-2">
+            <label
+              for="premium-channel"
+              class="cursor-pointer text-sm font-medium text-gray-400"
+              >Premium Channels</label
+            >
+            <input
+              type="number"
+              id="premium-channel"
+              name="premium-channel"
+              class="premium__channels__input w-full rounded-sm border border-gray-300 bg-white px-2 py-1.5 placeholder:text-sm placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500/60 focus:outline-none"
+              placeholder="e.g. 5"
+              min="0"
+            />
+            <p
+              class="premium__channel__warning hidden rounded-sm bg-yellow-500 px-3 text-sm py-1.5 text-white"
+            ></p>
+          </div>
+        </form>
+
+        <div class="result__area mt-8">
+          <div
+            class="result__message hidden rounded-sm bg-blue-600 px-4 py-3 text-slate-100 shadow-md"
+          >
+            <div class="mb-1">
+              <span class="opacity-90">Customer ID:</span>
+              <span
+                class="id__display font-medium underline tracking-wide"
+              ></span>
+            </div>
+            <div class="text-lg">
+              <span>Total Bill Amount:</span>
+              <span class="total__value__display font-bold text-xl"></span>
+              <span class="text-sm font-light">$</span>
+            </div>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="calculate__btn absolute bottom-2 left-2 cursor-pointer rounded-md border-none bg-blue-500 px-4 py-2 text-sm text-white transition-colors duration-300 hover:bg-blue-600"
+        >
+          Calculate
+        </button>
+        <button
+          type="button"
+          class="reset__btn absolute right-2 bottom-2 cursor-pointer rounded-md bg-red-500 px-2 py-1 text-sm text-white transition-colors duration-300 hover:bg-red-600"
+        >
+          reset
+        </button>
+
+        <div
+          class="backdrop absolute inset-0 z-10 flex items-center justify-center bg-linear-to-br from-blue-600 to-cyan-600 text-slate-200 transition duration-1000 group-hover:from-blue-700 group-hover:to-cyan-700 group-hover:text-slate-100"
+        >
+          <h2 class="text-lg font-bold tracking-wider text-center">
+            04. CABLE BILLING CALCULATOR
           </h2>
         </div>
       </article>
