@@ -12,8 +12,8 @@ export function getCustomerIdDOM(){
 
 export function getCustomerTypeSelectDOM(){
     return{
-        customerTypeSelect: $(".select__type"),
-        customerTypeSelectWarning: $(".customer_type__warning")
+        customerSelectedType: $(".select__type"),
+        customerTypeWarning: $(".customer_type__warning")
     };
 }
 

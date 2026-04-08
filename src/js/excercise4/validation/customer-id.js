@@ -1,18 +1,46 @@
-import {ElementNotFoundError} from "../../dom-system";
-import {getConnectionDOM} from "../dom.js";
+const ERROR_STATE = {
+  empty: {
+    type: "empty",
+    message: "The customer ID can't be empty.",
+  },
+  format: {
+    type: "format",
+    message: "Customer ID must contain only letters and numbers, with no spaces.",
+  },
+  length: {
+    type: "length",
+    message: "The customer ID must be between 3 and 20 characters long.",
+  },
+};
+const REGEX = /^[a-zA-Z0-9]+$/;
 
-const DOM = (() => {
-  try {
-    return getConnectionDOM();
-  } catch (error) {
-    if (error instanceof ElementNotFoundError) {
-      console.error(error.message);
-    } else {
-      console.error("Something went wrong: ", error.message);
+const validator = [
+  {
+    isInvalid: (value) => value === "",
+    error: ERROR_STATE.empty,
+  },
+  {
+    isInvalid: (value) => value.length < 3 || value.length > 20,
+    error: ERROR_STATE.length,
+  },
+  {
+    isInvalid: (value) => !REGEX.test(value),
+    error: ERROR_STATE.format,
+  },
+];
+
+function processValidation(value) {
+  for (const v of validator) {
+    if (v.isInvalid(value)) {
+      return {
+        isValid: false,
+        error: v.error,
+      };
     }
   }
-})();
+   return { isValid: true, error: null };
+}
 
-
-
-
+export function validateCustomerId(customerId) {
+  return processValidation(customerId);
+}
