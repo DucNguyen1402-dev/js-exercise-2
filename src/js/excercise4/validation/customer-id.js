@@ -1,3 +1,10 @@
+/**
+ * ================================
+ *    1. DATA CONFIG
+ * ================================
+ */
+
+
 const ERROR_STATE = {
   empty: {
     type: "empty",
@@ -14,6 +21,9 @@ const ERROR_STATE = {
 };
 const REGEX = /^[a-zA-Z0-9]+$/;
 
+
+
+
 const validator = [
   {
     isInvalid: (value) => value === "",
@@ -28,6 +38,12 @@ const validator = [
     error: ERROR_STATE.format,
   },
 ];
+
+/**
+ * ================================
+ *    2. VALIDATION LOGIC
+ * ================================
+ */
 
 function processValidation(value) {
   for (const v of validator) {

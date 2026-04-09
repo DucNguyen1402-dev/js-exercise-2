@@ -1,3 +1,9 @@
+/**
+ * ================================
+ *    1. DATA CONFIG
+ * ================================
+ */
+
 const ERROR_STATE = {
   empty: {
     type: "empty",
@@ -23,6 +29,14 @@ const validator = [
     error: ERROR_STATE.range,
   },
 ];
+
+
+/**
+ * ================================
+ *    2. VALIDATION LOGIC
+ * ================================
+ */
+
 
 function processValidation(value) {
   for (const v of validator) {

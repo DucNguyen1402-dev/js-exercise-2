@@ -375,14 +375,14 @@
 
       <!-- exercise 4 -->
       <article
-        class="card cable__billing group closed-card relative h-150 max-w-md cursor-pointer overflow-hidden rounded-lg border border-slate-100 bg-gray-100 p-4 pb-6 transition duration-500 hover:-translate-y-4"
+        class="card cable__billing group closed-card  relative max-w-md cursor-pointer overflow-hidden rounded-lg border border-slate-100 bg-gray-100 p-4 pb-30 transition duration-500 hover:-translate-y-4 "
       >
         <p class="text-slate-500">
           Please enter your customer ID and select the account type. The system
           will automatically enable the connection field for Business accounts
           to ensure an accurate total calculation.
         </p>
-        <form class="mt-6">
+        <form class="mt-6 cable__billing__form">
           <div class="flex flex-col gap-2">
             <label
               for="customer-id"
@@ -416,10 +416,11 @@
               <option value="business">Business</option>
             </select>
             <p
-              class="customer_type__warning hidden rounded-sm bg-yellow-500 text-sm px-3 py-1.5 text-white"
+              class="customer__type__warning hidden rounded-sm bg-yellow-500 text-sm px-3 py-1.5 text-white"
             ></p>
           </div>
-          <div class="mt-4 hidden">
+          <div class="connections__form hidden">
+            <div class="mt-4 flex flex-col gap-2">
             <label
               for="connections"
               class="cursor-pointer text-sm font-medium text-gray-400"
@@ -436,6 +437,7 @@
             <p
               class="connection__warning hidden rounded-sm bg-yellow-500 px-3 text-sm py-1.5 text-white"
             ></p>
+          </div>
           </div>
 
           <div class="mt-4 flex flex-col gap-2">
@@ -460,18 +462,18 @@
 
         <div class="result__area mt-8">
           <div
-            class="result__message hidden rounded-sm bg-blue-600 px-4 py-3 text-slate-100 shadow-md"
+            class="result__message hidden rounded-sm bg-blue-500 px-4 py-3 text-slate-100 shadow-md"
           >
             <div class="mb-1">
               <span class="opacity-90">Customer ID:</span>
               <span
-                class="id__display font-medium underline tracking-wide"
+                class="id__display font-medium underline"
               ></span>
             </div>
             <div class="text-lg">
               <span>Total Bill Amount:</span>
-              <span class="total__value__display font-bold text-xl"></span>
-              <span class="text-sm font-light">$</span>
+              <span class="total__value__display font-bold"></span>
+              <span class="font-light">$</span>
             </div>
           </div>
         </div>

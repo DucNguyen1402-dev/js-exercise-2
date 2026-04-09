@@ -9,6 +9,7 @@ import { initDependentInputEvent } from "./event/dependent.js";
 import {getTaxCalculation} from "./calculation.js";
 import { displayTaxCalculation, resetResultArea } from "./ui/display.js";
 import {resetUI} from "./ui/reset.js";
+
 /**
  * =====================================
  *           0. DOM SETUP 

@@ -1,4 +1,10 @@
 
+/**
+ * ================================
+ *    1. VALIDATION LOGIC
+ * ================================
+ */
+
 const ERROR_STATE = {
    empty:{
     type: "empty",
@@ -13,6 +19,12 @@ const validator =[
     error : ERROR_STATE.empty
   },
 ]
+
+/**
+ * ================================
+ *    1. VALIDATION LOGIC
+ * ================================
+ */
 
 function processValidation(value){
    for(const v of validator){

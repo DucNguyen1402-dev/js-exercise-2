@@ -4,6 +4,7 @@ import {
   getCustomerIdDOM,
   getCustomerTypeSelectDOM,
   getConnectionDOM,
+  getConnectionForm,
   getPremiumChannelDOM,
   getResultArea,
 } from "./dom.js";
@@ -26,8 +27,14 @@ import {
   resetPremiumChannelError,
 } from "./ui/index.js";
 
-import { resetResultArea } from "./ui/display.js";
-// import {resetAllUIError} from "./ui/index.js"
+import { renderResult, resetResultUI } from "./ui/display.js";
+import { resetAllUI } from "./ui/index.js";
+
+import {
+  initCustomerIdEvent,
+  initConnectionEvent,
+  initPremiumChannelEvent,
+} from "./event/index.js";
 
 /**
  * =================================
@@ -42,6 +49,7 @@ const DOM = (() => {
       ...getCustomerIdDOM(),
       ...getCustomerTypeSelectDOM(),
       ...getConnectionDOM(),
+      ...getConnectionForm(),
       ...getPremiumChannelDOM(),
       ...getResultArea(),
     };
@@ -81,9 +89,9 @@ function getFormUI() {
   };
 }
 
-function getResultForm() {
+function getResultFormUI() {
   return {
-    message: DOM.resultMessage,
+    area: DOM.resultArea,
     id: DOM.idDisplay,
     value: DOM.totalValueDisplay,
   };
@@ -97,6 +105,16 @@ function getInputValues() {
     premiumChannel: DOM.premiumChannelsInput.value.trim(),
   };
 }
+
+const PRICE = {
+  RESIDENTIAL: { fee: 4.5, service: 20.5, channel: 7.5 },
+  BUSINESS: {
+    fee: 15,
+    serviceLimit: 75,
+    serviceAdditional: 5,
+    channel: 50,
+  },
+};
 
 /**
  * ==========================================
@@ -157,7 +175,7 @@ function resetErrorUI(validInputs) {
     VALID_UI_MAP[key]?.(formUI[key]);
   });
 }
-function handleErrorUI({ validationResults }) {
+function syncErrorUI({ validationResults }) {
   const errorInputs = {};
   const validInputs = {};
 
@@ -179,25 +197,63 @@ function handleErrorUI({ validationResults }) {
  * ==========================================
  */
 
+const resultUI = getResultFormUI();
+
 function handleCalculation({
   customerId,
   customerType,
-  connection,
+  connection = 0,
   premiumChannel,
-}) {}
+}) {
+  let totalBill = 0;
 
-function renderResult(result) {}
+  if (customerType === "residential") {
+    totalBill =
+      PRICE.RESIDENTIAL.fee +
+      PRICE.RESIDENTIAL.service +
+      PRICE.RESIDENTIAL.channel * premiumChannel;
+  } else if (customerType === "business") {
+    const additionalConnections = Math.max(0, connection - 10);
+    const serviceFee =
+      PRICE.BUSINESS.serviceLimit +
+      additionalConnections * PRICE.BUSINESS.serviceAdditional;
+
+    totalBill =
+      PRICE.BUSINESS.fee + serviceFee + PRICE.BUSINESS.channel * premiumChannel;
+  }
+
+  return {
+    id: customerId,
+    total: totalBill.toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }),
+  };
+}
 
 function handleCableBilling() {
   const inputValues = getInputValues();
-  const stateInput = validateInputs(inputValues);
-  if (!stateInput.isValid) {
-    resetResultArea();
-    handleErrorUI(stateInput);
-    return;
+  if (inputValues.customerType === "residential") {
+    inputValues.connection = 0;
   }
+
+  const stateInput = validateInputs(inputValues);
+
+  if (!stateInput.isValid) {
+    resetResultUI(resultUI);
+  }
+
+  syncErrorUI(stateInput);
+
+  if (!stateInput.isValid) return;
+
   const result = handleCalculation(inputValues);
-  renderResult(result);
+  const displayUI = {
+    message: DOM.resultArea,
+    id: DOM.idDisplay,
+    total: DOM.totalValueDisplay,
+  };
+  renderResult(displayUI, result);
 }
 
 /**
@@ -212,10 +268,28 @@ DOM.calculateBtn.addEventListener("click", handleCableBilling);
 
 /*====== 5.2 Reset button event ====== */
 
-// DOM.resetBtn.addEventListener("click", resetAllUIError);
+DOM.resetBtn.addEventListener("click", () => {
+  const formUI = getFormUI();
+  const resultFormUI = getResultFormUI();
+  resetAllUI(formUI, resultFormUI);
+});
+
+/*====== 5.3 Customer Selected Type Event ====== */
+
+// -- Show/hide connection input based on selected customer type
+DOM.customerSelectedType.addEventListener("change", (e) => {
+  const isBusiness = e.target.value === "business";
+  DOM.connectionForm.classList.toggle("hidden", !isBusiness);
+
+  !isBusiness && (DOM.connectionInput.value = "");
+});
 
 /**
  * =====================================
  *   6. REAL-TIME INPUT VALIDATION INIT
  * =====================================
  */
+
+initCustomerIdEvent();
+initConnectionEvent();
+initPremiumChannelEvent();

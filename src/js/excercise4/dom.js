@@ -1,6 +1,12 @@
-import {$, ElementNotFoundError} from "../dom-system.js";
+import {$} from "../dom-system.js";
 
 
+
+export function getForm(){
+    return{
+        form: $(".cable__billing__form")
+    };
+}
 
 export function getCustomerIdDOM(){
     return{
@@ -13,15 +19,23 @@ export function getCustomerIdDOM(){
 export function getCustomerTypeSelectDOM(){
     return{
         customerSelectedType: $(".select__type"),
-        customerTypeWarning: $(".customer_type__warning")
+        customerTypeWarning: $(".customer__type__warning")
     };
 }
+
+
 
 export function getConnectionDOM(){
     return{
         connectionInput: $(".connections__input"),
-        connectionWarning: $(".connection__warning")
+        connectionWarning: $(".connection__warning"),
     };
+}
+
+export function getConnectionForm(){
+    return {
+        connectionForm: $(".connections__form")
+    }
 }
 
 export function getPremiumChannelDOM(){
@@ -34,8 +48,8 @@ export function getPremiumChannelDOM(){
 
 export function getResultArea(){
     return{
-        resultMessage: $(".cable__billing").querySelector(".result__message"),
-        idDisplay: $(".cable__billing").querySelector("id__display"),
+        resultArea: $(".cable__billing").querySelector(".result__message"),
+        idDisplay: $(".cable__billing").querySelector(".id__display"),
         totalValueDisplay: $(".cable__billing").querySelector(".total__value__display")
 
     };
@@ -44,6 +58,6 @@ export function getResultArea(){
 export function getBtn(){
      return{
         calculateBtn: $(".cable__billing").querySelector(".calculate__btn"),
-        resetBtn: $(".cable__billing").querySelector(".calculate__btn"),
+        resetBtn: $(".cable__billing").querySelector(".reset__btn"),
     };
 }

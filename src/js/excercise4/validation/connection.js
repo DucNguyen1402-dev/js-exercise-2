@@ -1,3 +1,10 @@
+/**
+ * ================================
+ *    1. DATA CONFIG
+ * ================================
+ */
+
+
 const ERROR_STATE = {
   empty: {
     type: "empty",
@@ -13,16 +20,29 @@ const ERROR_STATE = {
   },
 };
 
+
 const validator = [
   {
     isInvalid: (value) => value === "",
     error: ERROR_STATE.empty,
   },
   {
-    isInvalid: (value) => value < 0 || value > 10000,
+    isInvalid: (value) => !Number.isInteger(Number(value)),
+    error:  ERROR_STATE.notInteger
+  },
+  {
+    isInvalid: (value) => Number(value) < 0 || Number(value) > 10000,
     error: ERROR_STATE.range,
   },
 ];
+
+
+/**
+ * ================================
+ *    1. VALIDATION LOGIC
+ * ================================
+ */
+
 
 function processValidation(value) {
   for (const v of validator) {

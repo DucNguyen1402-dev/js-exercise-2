@@ -50,11 +50,11 @@ export function applyDependentIncomeErrorState(input, eventType, errorType) {
 /**
  * 
  * ==========================================
- *          1. FORM SUBMISSION
+ *          2. FORM SUBMISSION
  * ==========================================
  */
 
-/* =========== 1.1 DATA CONFIG ============  */
+/* =========== 2.1 DATA CONFIG ============  */
 
 let currentErrorType = null;
 
@@ -64,7 +64,7 @@ const SUBMISSION_ERROR_CLASSES = {
   tooHigh: ["ring-1", "ring-yellow-500"],
 };
 
-/* ========= 1.2 ERROR STATE MANAGEMENT==========  */
+/* ========= 2.2 ERROR STATE MANAGEMENT==========  */
 
 // PUBlIC API
 
